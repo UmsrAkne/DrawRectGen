@@ -50,14 +50,36 @@ package app {
             return distance;
         }
 
+        public function measureDistanceFromLeft(checkRange:Rectangle):int {
+            return measureDistanceFromSide(checkRange, "fromLeft");
+        }
+
+        public function measureDistanceFromRight(checkRange:Rectangle):int {
+            return measureDistanceFromSide(checkRange, "fromRight");
+        }
+
         /**
          * bitmapDataの不透明ピクセルが存在する領域とbitmapDataの左端との距離を取得します。
          * @param checkRange
          * @return
          */
-        public function measureDistanceFromLeft(checkRange:Rectangle):int {
+        private function measureDistanceFromSide(checkRange:Rectangle, searchDirection:String):int {
             var distance:int = 0;
-            var checkingPoint:Point = checkRange.topLeft;
+            var checkingPoint:Point;
+            var direction:int = 1;
+
+            if (searchDirection == "fromLeft") {
+                checkingPoint = checkRange.topLeft;
+                direction = 1;
+            }
+
+            if (searchDirection == "fromRight") {
+                // pixcelの位置情報はゼロオリジン
+                // 例えば幅 10px の画像ならばピクセルのインデックスは 0-9
+                // -1 しておかないと w=10 のrectangleの右端を指定した場合、読み取り開始位置が x=10 となりズレる。
+                checkingPoint = new Point(checkRange.right - 1, checkRange.top);
+                direction = -1;
+            }
 
             var loopCount:int = checkRange.width * checkRange.height;
             for (var i:int = 0; i < loopCount; i++) {
@@ -67,7 +89,7 @@ package app {
 
                 checkingPoint.y++;
                 if (checkingPoint.y > checkRange.bottom) {
-                    checkingPoint.x++;
+                    checkingPoint.x += direction;
                     checkingPoint.y = 0;
                     if (!checkRange.contains(checkingPoint.x, checkingPoint.y)) {
                         break;
@@ -76,7 +98,6 @@ package app {
                     distance++;
                 }
             }
-
             return distance;
         }
 
