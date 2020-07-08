@@ -49,5 +49,44 @@ package app {
 
             return distance;
         }
+
+        /**
+         * bitmapDataの不透明ピクセルが存在する領域とbitmapDataの左端との距離を取得します。
+         * @param checkRange
+         * @return
+         */
+        public function measureDistanceFromLeft(checkRange:Rectangle):int {
+            var distance:int = 0;
+            var checkingPoint:Point = checkRange.topLeft;
+
+            var loopCount:int = checkRange.width * checkRange.height;
+            for (var i:int = 0; i < loopCount; i++) {
+                if (!isTransparentPixel(bitmapData.getPixel32(checkingPoint.x, checkingPoint.y))) {
+                    break;
+                }
+
+                checkingPoint.y++;
+                if (checkingPoint.y > checkRange.bottom) {
+                    checkingPoint.x++;
+                    checkingPoint.y = 0;
+                    if (!checkRange.contains(checkingPoint.x, checkingPoint.y)) {
+                        break;
+                    }
+
+                    distance++;
+                }
+            }
+
+            return distance;
+        }
+
+        /**
+         * 入力されたピクセルが完全な透明ピクセルかどうかを判定します。
+         * @param pixelValue
+         * @return
+         */
+        private function isTransparentPixel(pixelValue:uint):Boolean {
+            return pixelValue <= 0x00ffffff;
+        }
     }
 }
