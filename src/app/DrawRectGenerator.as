@@ -20,8 +20,16 @@ package app {
          * @param bitmap 透明ピクセルを含むbitmapを入力します
          * @return
          */
-        public function getDrawRect(bitmapData:BitmapData):Rectangle {
-            return new Rectangle;
+        public function getDrawRect():Rectangle {
+            var rect:Rectangle = new Rectangle(0, 0, bitmapData.width, bitmapData.height);
+            var checkRect:Rectangle = rect.clone();
+
+            rect.top += measureDistanceFromTop(rect);
+            rect.left += measureDistanceFromLeft(rect);
+            rect.right -= measureDistanceFromRight(rect);
+            rect.bottom -= measureDistanceFromBottom(rect);
+
+            return rect;
         }
 
         /**

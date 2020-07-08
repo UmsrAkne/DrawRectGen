@@ -29,6 +29,8 @@ package tests {
 
             // 画像の底辺から不透明領域の底辺までの距離
             Assert.areEqual(drawRectGen.measureDistanceFromBottom(bmpRect), 20);
+
+            Assert.isTrue(drawRect.equals(drawRectGen.getDrawRect()));
         }
     }
 }
