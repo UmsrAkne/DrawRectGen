@@ -20,10 +20,8 @@ package app {
          * @param bitmap 透明ピクセルを含むbitmapを入力します
          * @return
          */
-        public static function get(bitmapData:BitmapData):Rectangle {
-            var rect:Rectangle = new Rectangle();
-
-            return rect;
+        public function getDrawRect(bitmapData:BitmapData):Rectangle {
+            return new Rectangle;
         }
 
         /**
