@@ -2,6 +2,7 @@ package app {
 
     import flash.geom.Rectangle;
     import flash.display.BitmapData;
+    import flash.geom.Point;
 
     public class DrawRectGenerator {
 
@@ -23,6 +24,32 @@ package app {
             var rect:Rectangle = new Rectangle();
 
             return rect;
+        }
+
+        /**
+         * bitmapDataの不透明ピクセルが存在する不透明領域とbitmapDataとの距離を取得します
+         */
+        public function measureDistanceFromTop(checkRange:Rectangle):int {
+            var distance:int = 0;
+            var bmpSize:Rectangle = new Rectangle(0, 0, bitmapData.width, bitmapData.height);
+
+            var pixels:Vector.<uint> = bitmapData.getVector(bmpSize);
+            pixels.fixed = true;
+
+            var pixelsLength:int = pixels.length;
+
+            // top を判定
+            for (var i:int = 0; i < pixelsLength; i++) {
+                if (i != 0 && i % bmpSize.width == 0) {
+                    distance++;
+                }
+
+                if (pixels[i] > 0x00ffffff) {
+                    break;
+                }
+            }
+
+            return distance;
         }
     }
 }
