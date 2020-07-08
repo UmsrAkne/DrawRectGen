@@ -5,6 +5,12 @@ package app {
 
     public class DrawRectGenerator {
 
+        private var bitmapData:BitmapData;
+
+        public function DrawRectGenerator(bmpData:BitmapData) {
+            this.bitmapData = bmpData;
+        }
+
         /**
          * 入力されたBitmapDataから完全に透明な部分を除いた範囲を矩形で取得します。
          * 注意:このメソッドで得た範囲内に透明ピクセルを含む場合はあり得ます。
