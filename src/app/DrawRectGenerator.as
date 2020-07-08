@@ -25,7 +25,7 @@ package app {
         }
 
         /**
-         * bitmapDataの不透明ピクセルが存在する不透明領域とbitmapDataとの距離を取得します
+         * bitmapDataの不透明ピクセルが存在する不透明領域とbitmapDataの天辺との距離を取得します
          */
         public function measureDistanceFromTop(checkRange:Rectangle):int {
             var distance:int = 0;
