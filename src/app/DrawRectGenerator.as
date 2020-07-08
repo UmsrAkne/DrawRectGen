@@ -101,6 +101,26 @@ package app {
             return distance;
         }
 
+        public function measureDistanceFromBottom(checkRange:Rectangle):int {
+            var distance:int = 0;
+            var pixels:Vector.<uint> = bitmapData.getVector(checkRange);
+            pixels.fixed = true;
+            const bmdWidth:int = bitmapData.width;
+
+            for (var i:int = pixels.length - 1; i >= 0; i--) {
+                //ベクターの最後尾、checkRange の右下から左方向に向かって要素を調べる
+                if (!isTransparentPixel(pixels[i])) {
+                    break;
+                }
+
+                if (i != 0 && i % bmdWidth == 0) {
+                    distance++;
+                }
+            }
+
+            return distance;
+        }
+
         /**
          * 入力されたピクセルが完全な透明ピクセルかどうかを判定します。
          * @param pixelValue
