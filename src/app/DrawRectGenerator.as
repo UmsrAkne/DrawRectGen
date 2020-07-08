@@ -90,7 +90,7 @@ package app {
                 checkingPoint.y++;
                 if (checkingPoint.y > checkRange.bottom) {
                     checkingPoint.x += direction;
-                    checkingPoint.y = 0;
+                    checkingPoint.y = checkRange.top;
                     if (!checkRange.contains(checkingPoint.x, checkingPoint.y)) {
                         break;
                     }
