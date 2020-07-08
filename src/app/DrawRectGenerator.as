@@ -105,7 +105,6 @@ package app {
             var distance:int = 0;
             var pixels:Vector.<uint> = bitmapData.getVector(checkRange);
             pixels.fixed = true;
-            const bmdWidth:int = bitmapData.width;
 
             for (var i:int = pixels.length - 1; i >= 0; i--) {
                 //ベクターの最後尾、checkRange の右下から左方向に向かって要素を調べる
@@ -113,7 +112,7 @@ package app {
                     break;
                 }
 
-                if (i != 0 && i % bmdWidth == 0) {
+                if (i != 0 && i % checkRange.width == 0) {
                     distance++;
                 }
             }
