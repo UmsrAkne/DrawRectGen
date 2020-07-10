@@ -1,31 +1,46 @@
 package tests {
-	/**
-	 * ...
-	 * @author 
-	 */
-	public final class Assert {
-		
-		private static var testCounter:int;
-		
-		public function Assert() {
-			
-		}
-		
-		public static function areEqual(a:*, b:*):void{
-			if (a != b) throw Error(a + " != " + b);
-			testCounter++;
-		}
-		
-		public static function isTrue(value:Boolean):void{
-			if (!value) throw Error("value is false");
-			testCounter++;
-		}
 
-		public static function isFalse(value:Boolean):void{
-			if (value) throw Error("value is true");
-			testCounter++;
-		}
+    /**
+     * ...
+     * @author
+     */
+    public final class Assert {
 
-		public static function get TestCounter():int{ return testCounter; }
-	}
+        private static var testCounter:int;
+
+        public function Assert() {
+
+        }
+
+        public static function areEqual(a:*, b:*, comment:String = ""):void {
+            if (a != b) {
+                issueTestFailureMessage("[Assert]" + " \t" + a + " != " + b, comment);
+            }
+            testCounter++;
+        }
+
+        public static function isTrue(value:Boolean, comment:String = ""):void {
+            if (!value) {
+                issueTestFailureMessage("[Assert]" + "\t" + "value is False", comment);
+            }
+            testCounter++;
+        }
+
+        public static function isFalse(value:Boolean, comment:String = ""):void {
+            if (value) {
+                issueTestFailureMessage("[Assert]" + "\t" + "value is True", comment);
+            }
+            testCounter++;
+        }
+
+        public static function get TestCounter():int {
+            return testCounter;
+        }
+
+        private static function issueTestFailureMessage(msg:String, comment:String):void {
+            trace("[Assert] テスト失敗 " + comment);
+            trace(msg);
+            trace("[Assert]" + " ========================================");
+        }
+    }
 }
