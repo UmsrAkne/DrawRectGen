@@ -9,6 +9,7 @@ package tests {
             test();
             test2("左上に不透明領域が寄っている場合のテスト");
             test3("右下に不透明領域が寄っている場合のテスト");
+            test4("loop回数を確認するテスト");
         }
 
         private function test():void {
@@ -53,6 +54,36 @@ package tests {
             var bmdRect:Rectangle = new Rectangle(0, 0, bmd.width, bmd.height);
             var rectGen:DrawRectGenerator = new DrawRectGenerator(bmd);
             Assert.isTrue(drawRect.equals(rectGen.getDrawRect()));
+        }
+
+        private function test4(param0:String):void {
+            var bmd:BitmapData = new BitmapData(40, 40, true, 0x0);
+            var drawRect:Rectangle = new Rectangle(10, 10, 10, 10);
+            bmd.fillRect(drawRect, 0xffffffff);
+
+            var bmdRect:Rectangle = new Rectangle(0, 0, bmd.width, bmd.height);
+            var rectGen:DrawRectGenerator = new DrawRectGenerator(bmd);
+            rectGen.Interval = -1; // 負の数なら０がセットされる
+            Assert.areEqual(rectGen.Interval, 0, "既定値0で試行");
+            rectGen.getDrawRect();
+
+            //  40 * 40 = 1600px の矩形のうち、
+            //  不透明な領域が 10 * 10 = 100px 
+            //  初回テストのループ回数は 1550 回前後　不透明領域の位置により微妙に変動
+            Assert.isTrue(rectGen.LoopCounter > 1500, "本来は1500回以上ループする");
+
+            var secondRectGen:DrawRectGenerator = new DrawRectGenerator(bmd);
+            secondRectGen.Interval = 1;
+            Assert.areEqual(secondRectGen.Interval, 1);
+            secondRectGen.getDrawRect();
+            Assert.isTrue(secondRectGen.LoopCounter < 800, "1600pxのうち、調査するピクセルを半分程度まで減らす");
+            Assert.isTrue(drawRect.equals(secondRectGen.getDrawRect()), "取得する矩形は想定と同じか");
+
+            var thridRectGen:DrawRectGenerator = new DrawRectGenerator(bmd);
+            thridRectGen.Interval = 2;
+            thridRectGen.getDrawRect();
+            Assert.isTrue(thridRectGen.LoopCounter < 540, "1600pxのうち 調査ピクセルを3/1程度まで減らす")
+            Assert.isTrue(drawRect.equals(thridRectGen.getDrawRect()), "取得する矩形は想定と同じか");
         }
     }
 }

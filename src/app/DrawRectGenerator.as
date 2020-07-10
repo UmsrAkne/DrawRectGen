@@ -7,6 +7,30 @@ package app {
     public class DrawRectGenerator {
 
         private var bitmapData:BitmapData;
+        private var loopCounter:int = 0;
+        private var interval:int = 0;
+
+        public function get LoopCounter():int {
+            return loopCounter;
+        }
+
+        public function get Interval():int {
+            return interval;
+        }
+
+        /**
+         * bitmapdDataのピクセルを調査する際、Intervalの値に応じて調査するピクセルをスキップします。
+         * デフォルトは0となっており、全ピクセルを調べます。
+         * ex Interval = 1; ピクセルを一つ飛ばしで調べます。
+         * @param value 負の値をセットしようとした場合には 0 がセットされます。
+         */
+        public function set Interval(value:int):void {
+            if (value < 0) {
+                value = 0;
+                return;
+            }
+            interval = value;
+        }
 
         public function DrawRectGenerator(bmpData:BitmapData) {
             this.bitmapData = bmpData;
@@ -45,14 +69,16 @@ package app {
             var pixelsLength:int = pixels.length;
 
             // top を判定
-            for (var i:int = 0; i < pixelsLength; i++) {
-                if (i != 0 && i % bmpSize.width == 0) {
+            for (var i:int = 0; i < pixelsLength; i += 1 + Interval) {
+                if (i > Interval && i % bmpSize.width <= Interval) {
                     distance++;
                 }
 
                 if (pixels[i] > 0x00ffffff) {
                     break;
                 }
+
+                loopCounter++;
             }
 
             return distance;
@@ -95,7 +121,7 @@ package app {
                     break;
                 }
 
-                checkingPoint.y++;
+                checkingPoint.y += Interval + 1;
                 if (checkingPoint.y > checkRange.bottom) {
                     checkingPoint.x += direction;
                     checkingPoint.y = checkRange.top;
@@ -105,6 +131,8 @@ package app {
 
                     distance++;
                 }
+
+                loopCounter++
             }
             return distance;
         }
@@ -114,15 +142,17 @@ package app {
             var pixels:Vector.<uint> = bitmapData.getVector(checkRange);
             pixels.fixed = true;
 
-            for (var i:int = pixels.length - 1; i >= 0; i--) {
+            for (var i:int = pixels.length - 1; i >= 0; i -= 1 + Interval) {
                 //ベクターの最後尾、checkRange の右下から左方向に向かって要素を調べる
                 if (!isTransparentPixel(pixels[i])) {
                     break;
                 }
 
-                if (i != 0 && i % checkRange.width == 0) {
+                if (i != 0 && i % checkRange.width <= Interval) {
                     distance++;
                 }
+
+                loopCounter++;
             }
 
             return distance;
