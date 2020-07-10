@@ -7,6 +7,11 @@ package app {
     public class DrawRectGenerator {
 
         private var bitmapData:BitmapData;
+        private var loopCounter:int = 0;
+
+        public function get LoopCounter():int {
+            return loopCounter;
+        }
 
         public function DrawRectGenerator(bmpData:BitmapData) {
             this.bitmapData = bmpData;
@@ -53,6 +58,8 @@ package app {
                 if (pixels[i] > 0x00ffffff) {
                     break;
                 }
+
+                loopCounter++;
             }
 
             return distance;
@@ -105,6 +112,8 @@ package app {
 
                     distance++;
                 }
+
+                loopCounter++
             }
             return distance;
         }
@@ -123,6 +132,8 @@ package app {
                 if (i != 0 && i % checkRange.width == 0) {
                     distance++;
                 }
+
+                loopCounter++;
             }
 
             return distance;
