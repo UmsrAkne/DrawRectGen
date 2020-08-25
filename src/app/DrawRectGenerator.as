@@ -179,3 +179,10 @@ package app {
         }
     }
 }
+
+        public function containsUntransparentPixel(rect:Rectangle):Boolean {
+            var pxs:Vector.<uint> = bitmapData.getVector(rect);
+            return pxs.some(function(item:uint, idx:int, v:Vector.<uint>):Boolean {
+                return (item != 0x0);
+            });
+        }

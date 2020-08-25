@@ -87,3 +87,22 @@ package tests {
         }
     }
 }
+            testContainsUnTransparentPixel();
+
+        private function testContainsUnTransparentPixel():void {
+            var bmd:BitmapData = new BitmapData(40, 40, true, 0x0);
+            var drawRect:Rectangle = new Rectangle(10, 10, 10, 10);
+            bmd.fillRect(drawRect, 0xffffffff);
+
+            var bmdRect:Rectangle = new Rectangle(0, 0, bmd.width, bmd.height);
+
+            var ranges:Vector.<Rectangle> = new Vector.<Rectangle>();
+            ranges.push(new Rectangle(5, 5, 13, 13));
+            ranges.push(new Rectangle(30, 30, 20, 20));
+            ranges.push(new Rectangle(10, 10, 10, 10));
+            var rectGen:DrawRectGenerator = new DrawRectGenerator(bmd);
+
+            Assert.isTrue(rectGen.containsUntransparentPixel(new Rectangle(10, 10, 10, 10)));
+            Assert.isFalse(rectGen.containsUntransparentPixel(new Rectangle(30, 30, 10, 10)));
+
+        }
