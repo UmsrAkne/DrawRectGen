@@ -56,6 +56,15 @@ package app {
          * @return
          */
         public function getDrawRect():Rectangle {
+
+            if (preCheckRanges != null) {
+                for each (var pcRange:Rectangle in preCheckRanges) {
+                    if (containsUntransparentPixel(pcRange) && !existUntransparentPixelOnOuterEdge(pcRange)) {
+                        return pcRange;
+                    }
+                }
+            }
+
             var rect:Rectangle = new Rectangle(0, 0, bitmapData.width, bitmapData.height);
             var checkRect:Rectangle = rect.clone();
 

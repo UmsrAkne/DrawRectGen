@@ -57,6 +57,11 @@ package tests {
             var bmdRect:Rectangle = new Rectangle(0, 0, bmd.width, bmd.height);
             var rectGen:DrawRectGenerator = new DrawRectGenerator(bmd);
             Assert.isTrue(drawRect.equals(rectGen.getDrawRect()));
+
+            var v:Vector.<Rectangle> = new Vector.<Rectangle>();
+            v.push(drawRect);
+            var rectGen2:DrawRectGenerator = new DrawRectGenerator(bmd, v);
+            Assert.isTrue(drawRect.equals(rectGen2.getDrawRect()));
         }
 
         private function test4(param0:String):void {
