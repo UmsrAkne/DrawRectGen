@@ -7,6 +7,7 @@ package app {
     public class DrawRectGenerator {
 
         private var bitmapData:BitmapData;
+        private var preCheckRanges:Vector.<Rectangle>;
         private var loopCounter:int = 0;
         private var interval:int = 0;
 
@@ -32,8 +33,18 @@ package app {
             interval = value;
         }
 
-        public function DrawRectGenerator(bmpData:BitmapData) {
+        /**
+         *
+         * @param bmpData 不透明な範囲を調べたい BitmapData を入力します。
+         * @param optionCheckRanges 不透明範囲の候補がある場合は入力します。
+         * このパラメーターを入力した場合は、この範囲を優先してチェックします。
+         */
+        public function DrawRectGenerator(bmpData:BitmapData, optionCheckRanges:Vector.<Rectangle> = null) {
             this.bitmapData = bmpData;
+
+            if (optionCheckRanges) {
+                this.preCheckRanges = optionCheckRanges;
+            }
         }
 
         /**
@@ -45,6 +56,15 @@ package app {
          * @return
          */
         public function getDrawRect():Rectangle {
+
+            if (preCheckRanges != null) {
+                for each (var pcRange:Rectangle in preCheckRanges) {
+                    if (containsUntransparentPixel(pcRange) && !existUntransparentPixelOnOuterEdge(pcRange)) {
+                        return pcRange;
+                    }
+                }
+            }
+
             var rect:Rectangle = new Rectangle(0, 0, bitmapData.width, bitmapData.height);
             var checkRect:Rectangle = rect.clone();
 
@@ -165,6 +185,54 @@ package app {
          */
         private function isTransparentPixel(pixelValue:uint):Boolean {
             return pixelValue <= 0x00ffffff;
+        }
+
+        public function containsUntransparentPixel(rect:Rectangle):Boolean {
+            var pxs:Vector.<uint> = bitmapData.getVector(rect);
+            return pxs.some(function(item:uint, idx:int, v:Vector.<uint>):Boolean {
+                return (item != 0x0);
+            });
+        }
+
+        /**
+         * 引数に入力した矩形の外周に不透明ピクセルが存在するかを取得します。
+         * @param rect
+         * @param numSkipPixel 外周のピクセルをチェックする際、この値だけチェックするピクセルをスキップします。
+         * 精度を落として処理を実行したいときに使用します。
+         * 例 1 で１つ飛ばし oxoxoxo 2 で２つ飛ばし oxxoxxoxxo
+         * @return
+         */
+        public function existUntransparentPixelOnOuterEdge(rect:Rectangle, numSkipPixel:int = 0):Boolean {
+            // 引数の rect をピッタリ覆う rect
+            var outerRect:Rectangle = new Rectangle(rect.x - 1, rect.y - 1, rect.width + 2, rect.height + 2);
+
+            var ranges:Vector.<Rectangle> = new Vector.<Rectangle>();
+            ranges.push(new Rectangle(outerRect.x, outerRect.y, outerRect.width, 1));
+            ranges.push(new Rectangle(outerRect.x, outerRect.bottom, outerRect.width, 1))
+            ranges.push(new Rectangle(outerRect.x, outerRect.y, 1, outerRect.height))
+            ranges.push(new Rectangle(outerRect.right, outerRect.y, 1, outerRect.height));
+
+            var existUntransparentPixel:Boolean = false;
+
+            for each (var r:Rectangle in ranges) {
+                var px:Vector.<uint> = bitmapData.getVector(r);
+
+                for (var i:int = 0; i < px.length; i++) {
+
+                    if (px[i] != 0x0) {
+                        existUntransparentPixel = true;
+                        break;
+                    }
+
+                    i += numSkipPixel;
+                }
+
+                if (existUntransparentPixel) {
+                    break;
+                }
+            }
+
+            return existUntransparentPixel;
         }
     }
 }
