@@ -7,6 +7,7 @@ package app {
     public class DrawRectGenerator {
 
         private var bitmapData:BitmapData;
+        private var preCheckRanges:Vector.<Rectangle>;
         private var loopCounter:int = 0;
         private var interval:int = 0;
 
@@ -32,8 +33,18 @@ package app {
             interval = value;
         }
 
-        public function DrawRectGenerator(bmpData:BitmapData) {
+        /**
+         *
+         * @param bmpData 不透明な範囲を調べたい BitmapData を入力します。
+         * @param optionCheckRanges 不透明範囲の候補がある場合は入力します。
+         * このパラメーターを入力した場合は、この範囲を優先してチェックします。
+         */
+        public function DrawRectGenerator(bmpData:BitmapData, optionCheckRanges:Vector.<Rectangle> = null) {
             this.bitmapData = bmpData;
+
+            if (optionCheckRanges) {
+                this.preCheckRanges = optionCheckRanges;
+            }
         }
 
         /**
