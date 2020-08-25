@@ -10,6 +10,9 @@ package tests {
             test2("左上に不透明領域が寄っている場合のテスト");
             test3("右下に不透明領域が寄っている場合のテスト");
             test4("loop回数を確認するテスト");
+
+            testContainsUnTransparentPixel();
+            testExistUntransparentPixelOnOuterEdge();
         }
 
         private function test():void {
@@ -85,9 +88,6 @@ package tests {
             Assert.isTrue(thridRectGen.LoopCounter < 540, "1600pxのうち 調査ピクセルを3/1程度まで減らす")
             Assert.isTrue(drawRect.equals(thridRectGen.getDrawRect()), "取得する矩形は想定と同じか");
         }
-    }
-}
-            testContainsUnTransparentPixel();
 
         private function testContainsUnTransparentPixel():void {
             var bmd:BitmapData = new BitmapData(40, 40, true, 0x0);
@@ -106,3 +106,27 @@ package tests {
             Assert.isFalse(rectGen.containsUntransparentPixel(new Rectangle(30, 30, 10, 10)));
 
         }
+
+        private function testExistUntransparentPixelOnOuterEdge():void {
+            var bmd:BitmapData = new BitmapData(40, 40, true, 0x0);
+            var drawRect:Rectangle = new Rectangle(10, 10, 10, 10);
+            bmd.fillRect(drawRect, 0xffffffff);
+
+            var bmdRect:Rectangle = new Rectangle(0, 0, bmd.width, bmd.height);
+
+            var ranges:Vector.<Rectangle> = new Vector.<Rectangle>();
+            ranges.push(drawRect);
+            var rectGen:DrawRectGenerator = new DrawRectGenerator(bmd);
+
+            // drawRect の外縁には、不透明ピクセルが存在しないので false 
+            // 精度を下げても結果は変わらないはず
+            Assert.isFalse(rectGen.existUntransparentPixelOnOuterEdge(drawRect, 0));
+            Assert.isFalse(rectGen.existUntransparentPixelOnOuterEdge(drawRect, 1));
+            Assert.isFalse(rectGen.existUntransparentPixelOnOuterEdge(drawRect, 2));
+
+            // 検索範囲を少し右にずらす。　不透明ピクセルがはみ出すはずなので true
+            var r:Rectangle = new Rectangle(12, 10, 20, 20);
+            Assert.isTrue(rectGen.existUntransparentPixelOnOuterEdge(r, 0));
+        }
+    }
+}

@@ -177,8 +177,6 @@ package app {
         private function isTransparentPixel(pixelValue:uint):Boolean {
             return pixelValue <= 0x00ffffff;
         }
-    }
-}
 
         public function containsUntransparentPixel(rect:Rectangle):Boolean {
             var pxs:Vector.<uint> = bitmapData.getVector(rect);
@@ -186,3 +184,46 @@ package app {
                 return (item != 0x0);
             });
         }
+
+        /**
+         * 引数に入力した矩形の外周に不透明ピクセルが存在するかを取得します。
+         * @param rect
+         * @param numSkipPixel 外周のピクセルをチェックする際、この値だけチェックするピクセルをスキップします。
+         * 精度を落として処理を実行したいときに使用します。
+         * 例 1 で１つ飛ばし oxoxoxo 2 で２つ飛ばし oxxoxxoxxo
+         * @return
+         */
+        public function existUntransparentPixelOnOuterEdge(rect:Rectangle, numSkipPixel:int = 0):Boolean {
+            // 引数の rect をピッタリ覆う rect
+            var outerRect:Rectangle = new Rectangle(rect.x - 1, rect.y - 1, rect.width + 2, rect.height + 2);
+
+            var ranges:Vector.<Rectangle> = new Vector.<Rectangle>();
+            ranges.push(new Rectangle(outerRect.x, outerRect.y, outerRect.width, 1));
+            ranges.push(new Rectangle(outerRect.x, outerRect.bottom, outerRect.width, 1))
+            ranges.push(new Rectangle(outerRect.x, outerRect.y, 1, outerRect.height))
+            ranges.push(new Rectangle(outerRect.right, outerRect.y, 1, outerRect.height));
+
+            var existUntransparentPixel:Boolean = false;
+
+            for each (var r:Rectangle in ranges) {
+                var px:Vector.<uint> = bitmapData.getVector(r);
+
+                for (var i:int = 0; i < px.length; i++) {
+
+                    if (px[i] != 0x0) {
+                        existUntransparentPixel = true;
+                        break;
+                    }
+
+                    i += numSkipPixel;
+                }
+
+                if (existUntransparentPixel) {
+                    break;
+                }
+            }
+
+            return existUntransparentPixel;
+        }
+    }
+}
